@@ -1,0 +1,51 @@
+{
+  "name": "url-shortener",
+  "version": "1.0.0",
+  "main": "src/app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "cross-env NODE_ENV=test jest --coverage --silent",
+    "test:auth": "cross-env NODE_ENV=test jest test/auth.test.js --silent",
+    "test:utils": "cross-env NODE_ENV=test ENABLE_LOG_IN_TESTS=true jest test/utils.test.js --silent",
+    "test:watch": "cross-env NODE_ENV=test jest --watch",
+    "lint": "eslint src/ test/",
+    "format": "prettier --write src/ test/"
+  },
+  "keywords": [
+    "url-shortener",
+    "backend",
+    "express"
+  ],
+  "author": "Your Name",
+  "license": "ISC",
+  "description": "URL Shortener Microservice with Integrated Logging",
+  "dependencies": {
+    "axios": "^1.10.0",
+    "body-parser": "^2.2.0",
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.16.3"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-jest": "^27.6.0",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.0",
+    "prettier": "^3.2.5",
+    "supertest": "^6.3.3"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/app.js"
+    ]
+  }
+}
