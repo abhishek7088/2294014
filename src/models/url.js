@@ -40,7 +40,7 @@ const urlSchema = new mongoose.Schema({
   ]
 });
 
-// Log when a new URL is saved
+
 urlSchema.post('save', function(doc) {
   log('backend', 'debug', 'db', `New URL saved: ${doc.shortcode}`);
 });
