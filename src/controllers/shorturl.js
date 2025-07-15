@@ -1,11 +1,13 @@
+// ✅ Enhanced redirect with referrer and IP tracking + storage in analytics array
+// File: src/controllers/shorturl.js
+
 const Url = require('../models/url');
 const { generateShortCode } = require('../utils/shortcode');
 const { log } = require('../utils/logger');
 
 async function createShortUrl(data) {
   const { url, validity = 30, shortcode } = data;
-  
-  // Check if custom shortcode is provided and available
+
   if (shortcode) {
     const existing = await Url.findOne({ shortcode });
     if (existing) {
@@ -21,20 +23,23 @@ async function createShortUrl(data) {
     originalUrl: url,
     shortcode: code,
     expiry,
-    createdAt: new Date()
+    createdAt: new Date(),
+    accessCount: 0,
+    lastAccessed: null,
+    analytics: [] // new field to track visits
   });
 
   await newUrl.save();
-  
+
   return {
     shortLink: `${process.env.BASE_URL || 'http://localhost:3000'}/${code}`,
     expiry: expiry.toISOString()
   };
 }
 
-async function redirectToUrl(shortcode) {
+async function redirectToUrl(shortcode, req) {
   const url = await Url.findOne({ shortcode });
-  
+
   if (!url) {
     log('backend', 'error', 'handler', `Shortcode not found: ${shortcode}`);
     throw new Error('Short URL not found');
@@ -45,9 +50,13 @@ async function redirectToUrl(shortcode) {
     throw new Error('Short URL has expired');
   }
 
-  // Update access count
+  const referrer = req.get('referer') || 'direct';
+  const ip = req.ip;
+
   url.accessCount += 1;
   url.lastAccessed = new Date();
+  url.analytics.push({ timestamp: new Date(), referrer, ip });
+
   await url.save();
 
   return url;
@@ -55,7 +64,7 @@ async function redirectToUrl(shortcode) {
 
 async function getUrlStats(shortcode) {
   const url = await Url.findOne({ shortcode });
-  
+
   if (!url) {
     log('backend', 'error', 'handler', `Stats requested for non-existent shortcode: ${shortcode}`);
     throw new Error('Short URL not found');
@@ -67,14 +76,14 @@ async function getUrlStats(shortcode) {
     createdAt: url.createdAt,
     expiry: url.expiry,
     accessCount: url.accessCount,
-    lastAccessed: url.lastAccessed
+    lastAccessed: url.lastAccessed || null,
+    analytics: url.analytics
   };
 }
 
 async function generateUniqueShortCode() {
   let code;
   let attempts = 0;
-  
   do {
     code = generateShortCode();
     attempts++;
@@ -83,12 +92,7 @@ async function generateUniqueShortCode() {
       throw new Error('Failed to generate unique shortcode');
     }
   } while (await Url.exists({ shortcode: code }));
-
   return code;
 }
 
-module.exports = {
-  createShortUrl,
-  redirectToUrl,
-  getUrlStats
-};
+module.exports = { createShortUrl, redirectToUrl, getUrlStats };

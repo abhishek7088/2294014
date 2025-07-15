@@ -30,7 +30,14 @@ const urlSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  lastAccessed: Date
+  lastAccessed: Date,
+  analytics: [
+    {
+      timestamp: Date,
+      referrer: String,
+      ip: String
+    }
+  ]
 });
 
 // Log when a new URL is saved

@@ -1,7 +1,8 @@
+require('dotenv').config();
+
 module.exports = {
-    CLIENT_ID: 'd9cbb699-6a27-44a5-8d59-8b1befa816da',
-    CLIENT_SECRET: 'tVJaaaRBSeXcRXeM',
-    ACCESS_CODE: 'xgAsNC',
-    LOG_API_URL: 'http://20.244.56.144/evaluation-service/logs',
-    BASE_URL: 'http://localhost:3000'
-  };
+  LOG_API_URL: 'http://20.244.56.144/evaluation-service/logs',
+  CLIENT_ID: process.env.CLIENT_ID,
+  CLIENT_SECRET: process.env.CLIENT_SECRET,
+  ACCESS_CODE: process.env.ACCESS_CODE
+};
