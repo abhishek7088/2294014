@@ -4,7 +4,7 @@ const { createShortUrl, redirectToUrl, getUrlStats } = require('../controllers/s
 const { validateUrlCreation } = require('../middlewares/validation');
 const { log } = require('../utils/logger');
 
-// Create short URL
+
 router.post('/', validateUrlCreation, async (req, res, next) => {
   try {
     const result = await createShortUrl(req.body);
@@ -15,7 +15,7 @@ router.post('/', validateUrlCreation, async (req, res, next) => {
   }
 });
 
-// Redirect to original URL
+
 router.get('/:shortcode', async (req, res, next) => {
   try {
     const url = await redirectToUrl(req.params.shortcode);
@@ -26,7 +26,7 @@ router.get('/:shortcode', async (req, res, next) => {
   }
 });
 
-// Get URL stats
+
 router.get('/:shortcode/stats', async (req, res, next) => {
   try {
     const stats = await getUrlStats(req.params.shortcode);
